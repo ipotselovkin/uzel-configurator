@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Прототип конфигуратора узла</title>
+  <style>
+    body { font-family: sans-serif; }
+    #builder { border: 1px dashed #aaa; padding: 20px; margin-top: 20px; }
+    .component { cursor: pointer; border: 1px solid #ccc; padding: 10px; margin: 5px; display: inline-block; }
+    #assembly { min-height: 100px; border: 1px solid #ccc; margin-top: 10px; padding: 10px; }
+    #output { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Собери узел</h1>
+  <div id="builder">
+    <div>
+      <strong>Компоненты:</strong>
+      <div class="component" onclick="addComponent('Кран')">Кран</div>
+      <div class="component" onclick="addComponent('Насос')">Насос</div>
+      <div class="component" onclick="addComponent('Клапан')">Клапан</div>
+      <div class="component" onclick="addComponent('Спускник')">Спускник</div>
+    </div>
+    <div id="assembly">
+      <strong>Собранный узел:</strong>
+      <ul id="assembly-list"></ul>
+    </div>
+    <div id="output">
+      <button onclick="downloadAssembly()">Скачать PDF</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const assembly = [];
+
+    function addComponent(name) {
+      assembly.push(name);
+      const list = document.getElementById('assembly-list');
+      const li = document.createElement('li');
+      li.textContent = name;
+      list.appendChild(li);
+    }
+
+    async function downloadAssembly() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFont("Helvetica", "normal"); // Устанавливаем шрифт с поддержкой Unicode
+      doc.text("Конфигурация узла", 10, 10);
+      assembly.forEach((item, index) => {
+        doc.text(`${index + 1}. ${item}`, 10, 20 + index * 10);
+      });
+      doc.save("assembly.pdf");
+    }
+  </script>
+</body>
+</html>
